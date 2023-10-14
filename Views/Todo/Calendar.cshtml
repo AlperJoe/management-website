@@ -1,0 +1,199 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+
+@model IEnumerable<FullCalendar_3.Models.Event>
+
+@{
+    ViewData["Title"] = "Calendar";
+
+    var events = (IEnumerable<FullCalendar_3.Models.Event>)ViewData["events"];
+    var length = events.Count();
+    string[] colors = { "au-task__item--danger", "au-task__item--warning", "au-task__item--primary", "au-task__item--success" };
+
+}
+<link rel="stylesheet" href="~/css/site.css" />
+
+
+<section class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="row-md-2">
+
+            </div>
+            <div class="row-md-10">
+                <div id="calendar"></div>
+            </div>
+
+        </div>
+        <div class="col-lg-4">
+            <div class="row-md-4">
+                <div id="calendar2"></div>
+            </div>
+            <div class="row-md-8">
+                <div class="au-task js-list-load">
+                    <div class="row-md-1">
+                        <div class="au-task__title">
+                            <h1>Yaklaşan Etkinlikler</h1>
+                        </div>
+                    </div>
+                    @{
+                        DateTime currentTime = DateTime.Now;
+                        String currentDay = currentTime.ToString("yyyy-MM-dd");
+
+                        DateTime tomorrowTime = currentTime.AddDays(1);
+                        String tomorrowDay = tomorrowTime.ToString("yyyy-MM-dd");
+
+                        bool isTodayEmpty = true;
+                        bool isTomorrowEmpty = true;
+                    }
+                    <div class="row-md-4">
+                        <h3> @currentDay </h3>
+                        <div class="au-task-list js-scrollbar3">
+
+                            @for (int i = 0; i < length; i++)
+                            {
+                                DateTime tempDate = events.ElementAt(i).StartDate;
+                                String tempday = tempDate.ToString("yyyy-MM-dd");
+                                String tempHour = tempDate.ToString("HH:mm:ss");
+
+                                if (tempday.Equals(currentDay))
+                                {
+                                    isTodayEmpty = false;
+                                    <div class="au-task__item au-task__item--danger">
+                                        <div class="au-task__item-inner">
+                                            <h5 class="task">
+                                                <a href="#">@events.ElementAt(i).Title</a>
+                                            </h5>
+                                            <span class="time">@tempHour</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (isTodayEmpty)
+                            {
+                                <div class="au-task__item au-task__item--primary">
+                                    <div class="au-task__item-inner">
+                                        <h5 class="task">
+                                            Bugün etkinlik yok
+                                        </h5>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row-md-4">
+                        <h3> @tomorrowDay </h3>
+                        <div class="au-task-list js-scrollbar3">
+                            @for (int i = 0; i < length; i++)
+                            {
+                                DateTime tempDate = events.ElementAt(i).StartDate;
+                                String tempday = tempDate.ToString("yyyy-MM-dd");
+                                String tempHour = tempDate.ToString("HH:mm:ss");
+
+                                if (tempday.Equals(tomorrowDay))
+                                {
+                                    isTomorrowEmpty = false;
+                                    <div class="au-task__item au-task__item--warning">
+                                        <div class="au-task__item-inner">
+                                            <h5 class="task">
+                                                <a href="#">@events.ElementAt(i).Title</a>
+                                            </h5>
+                                            <span class="time">@tempHour</span>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            @if (isTomorrowEmpty)
+                            {
+                                <div class="au-task__item au-task__item--primary">
+                                    <div class="au-task__item-inner">
+                                        <h5 class="task">
+                                            Bugün etkinlik yok
+                                        </h5>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--<section class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <div id="calendar"></div>
+        </div>
+        <div class="col--4">
+            <div class="ag-format-container">
+                <div class="ag-courses_box">
+
+                    @for (int i = 0; i < length; i++)
+                    {
+                        <div class="ag-courses_item">
+                            <a href="#" class="ag-courses-item_link">
+                                <div class="ag-courses-item_bg"></div>
+
+                                <div class="ag-courses-item_title">
+                                    <td>@events.ElementAt(i).Title</td>
+                                </div>
+
+                                <div class="ag-courses-item_date-box">
+                                    Start:
+                                    <span class="ag-courses-item_date">
+                                        @events.ElementAt(i).StartDate
+                                    </span>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>-->
+
+
+
+<div id="myModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+
+        <h1><label id="txtTitle"></label><span class="close">&times;</span></h1>
+        <hr />
+        <h3><label id="startDate"></label> - <label id="endDate"></label></h3>
+        <hr />
+        <h5><label id="txtDescription"></label></h5>
+        <div class="buttons">
+            <a href="#section-tours" id="close-btn" class="btn btn--white btn--animated btn--centered">Geri Dön</a>
+            <a href="#section-tours" class="btn btn--white btn--animated btn--centered">Ayrıntılı Bilgi</a>
+        </div>
+    </div>
+
+</div>
+
+<table id="eventsTable">
+    @for (int i = 0; i < length; i++)
+    {
+        <tr id="eventsInTable">
+            <td>@events.ElementAt(i).Id</td>
+            <td>@events.ElementAt(i).StartDate</td>
+            <td>@events.ElementAt(i).Title</td>
+            <td>@events.ElementAt(i).Description</td>
+            <td>@events.ElementAt(i).Link</td>
+            <td>@events.ElementAt(i).EndDate</td>
+        </tr>
+        <!--<a href="#calendar" class="btn btn--white btn--animated btn--centered">events.ElementAt(i).Title</a>-->
+    }
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.1.0/main.min.js"></script>
+<script src="~/js/Calendar.js"></script>
+
+
+
